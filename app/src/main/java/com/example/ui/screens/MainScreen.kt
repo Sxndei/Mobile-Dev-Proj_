@@ -28,6 +28,7 @@ fun MainScreenContainer(
     val currentRole by viewModel.currentRole.collectAsState()
     val activeChatId by viewModel.activeChatProviderId.collectAsState()
     val latestNotification by viewModel.notification.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
     // Navigation tab index within CUSTOMER role: 0=Browse, 1=Bookings, 2=Chats
     var customerTabIndex by remember { mutableStateOf(0) }
@@ -36,7 +37,27 @@ fun MainScreenContainer(
     var providerTabIndex by remember { mutableStateOf(0) }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        if (activeChatId != null) {
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.surface),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.primary,
+                        strokeWidth = 4.dp
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "Loading Services...",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+        } else if (activeChatId != null) {
             // Direct chat window overlay (full bleed screen)
             DirectMessageWindow(
                 viewModel = viewModel,

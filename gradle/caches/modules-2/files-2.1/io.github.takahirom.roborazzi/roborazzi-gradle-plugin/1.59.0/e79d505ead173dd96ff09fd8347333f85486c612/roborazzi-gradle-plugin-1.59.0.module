@@ -1,0 +1,143 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "io.github.takahirom.roborazzi",
+    "module": "roborazzi-gradle-plugin",
+    "version": "1.59.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.14.3"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.0.21"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "roborazzi-gradle-plugin-1.59.0.jar",
+          "url": "roborazzi-gradle-plugin-1.59.0.jar",
+          "size": 81371,
+          "sha512": "5392658860c1da0636f6ab272d963268134fcea071f80332fff0275861d885b69b47992be8afe7706c84522db2fa9cbbbcd27738031114ca5571331d4129fbaf",
+          "sha256": "f010d391f82cce146af1ca0460ed9cc9350c016c59f87fc66c460d48a17e2001",
+          "sha1": "b2b5c921e92f7ce40660e0e5cfad74dbad75aa5f",
+          "md5": "b865c615c241b35bf743beac7cd9b646"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "io.github.takahirom.roborazzi",
+          "module": "roborazzi-core",
+          "version": {
+            "requires": "1.59.0"
+          },
+          "excludes": [
+            {
+              "group": "junit",
+              "module": "junit"
+            }
+          ]
+        },
+        {
+          "group": "org.jetbrains.kotlinx",
+          "module": "kotlinx-serialization-json",
+          "version": {
+            "requires": "1.6.3"
+          }
+        },
+        {
+          "group": "org.webjars",
+          "module": "webjars-locator-lite",
+          "version": {
+            "requires": "0.0.6"
+          }
+        },
+        {
+          "group": "org.webjars",
+          "module": "materializecss",
+          "version": {
+            "requires": "1.0.0"
+          }
+        },
+        {
+          "group": "org.webjars",
+          "module": "material-design-icons",
+          "version": {
+            "requires": "4.0.0"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.0.21"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "roborazzi-gradle-plugin-1.59.0.jar",
+          "url": "roborazzi-gradle-plugin-1.59.0.jar",
+          "size": 81371,
+          "sha512": "5392658860c1da0636f6ab272d963268134fcea071f80332fff0275861d885b69b47992be8afe7706c84522db2fa9cbbbcd27738031114ca5571331d4129fbaf",
+          "sha256": "f010d391f82cce146af1ca0460ed9cc9350c016c59f87fc66c460d48a17e2001",
+          "sha1": "b2b5c921e92f7ce40660e0e5cfad74dbad75aa5f",
+          "md5": "b865c615c241b35bf743beac7cd9b646"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "roborazzi-gradle-plugin-1.59.0-sources.jar",
+          "url": "roborazzi-gradle-plugin-1.59.0-sources.jar",
+          "size": 18132,
+          "sha512": "f0126c92bf096aa93559db431c67d1d38743eb4300de0fbbf60520e53d94827e0f0b5fec415a9a3a5df6494262bc17f2dcb2752a8447aa5a81ab46a2c449a2d6",
+          "sha256": "edb8a646ae008ce89522cd77a2c8a0cb748b1aed50e6559c0bab4eb35cf031ab",
+          "sha1": "287bf320e7cd277ff067c0aa7cfe233b5bd94819",
+          "md5": "fce463580913bc6e498ea12e1fdeebc2"
+        }
+      ]
+    }
+  ]
+}

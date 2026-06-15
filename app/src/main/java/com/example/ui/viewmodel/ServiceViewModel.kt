@@ -40,6 +40,7 @@ class ServiceViewModel(application: Application) : AndroidViewModel(application)
         // Seed initial provider data if empty
         viewModelScope.launch {
             repository.seedDatabaseIfEmpty()
+            _isLoading.value = false
         }
     }
 
@@ -65,6 +66,9 @@ class ServiceViewModel(application: Application) : AndroidViewModel(application)
     // Notification updates
     private val _notification = MutableStateFlow<AppNotification?>(null)
     val notification: StateFlow<AppNotification?> = _notification.asStateFlow()
+
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     // Observables from repo
     val allProviders: StateFlow<List<ServiceProvider>> = repository.allProviders
