@@ -56,3 +56,14 @@ data class ChatConversation(
     val lastMessageTimestamp: Long,
     val unreadCount: Int = 0
 )
+
+@Entity(tableName = "users")
+data class UserAccount(
+    @PrimaryKey val email: String,
+    val name: String,
+    val passwordPlain: String, // stored plain for local verification
+    val role: String, // "CUSTOMER" or "PROVIDER"
+    val providerId: Int? = null, // Linked ServiceProvider ID if user is a provider
+    val avatarUrl: String = ""
+)
+

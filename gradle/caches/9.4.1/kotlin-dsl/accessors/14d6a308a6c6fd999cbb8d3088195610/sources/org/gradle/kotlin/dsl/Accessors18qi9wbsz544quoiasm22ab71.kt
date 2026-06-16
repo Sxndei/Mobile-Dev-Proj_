@@ -61,7 +61,7 @@ import org.gradle.kotlin.dsl.accessors.runtime.*
 /**
  * Provides the existing [uninstallAll][org.gradle.api.Task] task.
  */
-val TaskContainer.`uninstallAll`: TaskProvider<Task>
-    get() = named<Task>("uninstallAll")
+val TaskContainer.`uninstallAll`: TaskProvider<org.gradle.api.Task>
+    get() = named<org.gradle.api.Task>("uninstallAll")
 
 

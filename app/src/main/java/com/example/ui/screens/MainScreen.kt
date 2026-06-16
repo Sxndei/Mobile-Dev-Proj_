@@ -4,6 +4,7 @@ import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -25,10 +26,13 @@ import com.example.ui.viewmodel.ServiceViewModel
 fun MainScreenContainer(
     viewModel: ServiceViewModel
 ) {
+    val currentUser by viewModel.currentUser.collectAsState()
     val currentRole by viewModel.currentRole.collectAsState()
     val activeChatId by viewModel.activeChatProviderId.collectAsState()
     val latestNotification by viewModel.notification.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
+    
+    val firestoreStatus by viewModel.firestoreStatus.collectAsState()
+    val isFirestoreLive by viewModel.isFirestoreLive.collectAsState()
 
     // Navigation tab index within CUSTOMER role: 0=Browse, 1=Bookings, 2=Chats
     var customerTabIndex by remember { mutableStateOf(0) }
@@ -37,26 +41,9 @@ fun MainScreenContainer(
     var providerTabIndex by remember { mutableStateOf(0) }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        if (isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surface),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    CircularProgressIndicator(
-                        color = MaterialTheme.colorScheme.primary,
-                        strokeWidth = 4.dp
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = "Loading Services...",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
-            }
+        if (currentUser == null) {
+            // Full screen login / sign-up flow
+            AuthScreen(viewModel = viewModel)
         } else if (activeChatId != null) {
             // Direct chat window overlay (full bleed screen)
             DirectMessageWindow(
@@ -70,23 +57,153 @@ fun MainScreenContainer(
                 topBar = {
                     TopAppBar(
                         title = {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    imageVector = Icons.Default.WorkHistory,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = "Local Services",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.ExtraBold,
-                                    letterSpacing = 0.5.sp
-                                )
+                            Column {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        imageVector = Icons.Default.WorkHistory,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(22.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = "Local Services",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        letterSpacing = 0.5.sp
+                                    )
+                                }
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.padding(top = 2.dp)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(6.dp)
+                                            .background(
+                                                color = if (isFirestoreLive) Color(0xFF4CAF50) else Color(0xFFFF9800),
+                                                shape = RoundedCornerShape(50)
+                                            )
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = firestoreStatus,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+                                    )
+                                }
                             }
                         },
                         actions = {
+                            var showProfileDialog by remember { mutableStateOf(false) }
+
+                            if (showProfileDialog) {
+                                AlertDialog(
+                                    onDismissRequest = { showProfileDialog = false },
+                                    title = {
+                                        Text("My Profile", fontWeight = FontWeight.Bold)
+                                    },
+                                    text = {
+                                        Column(
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+                                        ) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(72.dp)
+                                                    .clip(CircleShape)
+                                                    .background(MaterialTheme.colorScheme.primaryContainer),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Text(
+                                                    text = currentUser?.name?.take(1)?.uppercase() ?: "U",
+                                                    style = MaterialTheme.typography.headlineMedium,
+                                                    fontWeight = FontWeight.Bold,
+                                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                                )
+                                            }
+                                            Spacer(modifier = Modifier.height(16.dp))
+                                            Text(
+                                                text = currentUser?.name ?: "User",
+                                                style = MaterialTheme.typography.titleMedium,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                            Text(
+                                                text = currentUser?.email ?: "",
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                            Spacer(modifier = Modifier.height(8.dp))
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                modifier = Modifier
+                                                    .clip(RoundedCornerShape(8.dp))
+                                                    .background(MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f))
+                                                    .padding(horizontal = 12.dp, vertical = 4.dp)
+                                            ) {
+                                                Icon(
+                                                    imageVector = if (currentUser?.role == "PROVIDER") Icons.Default.Handyman else Icons.Default.Person,
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                                                    modifier = Modifier.size(14.dp)
+                                                )
+                                                Spacer(modifier = Modifier.width(6.dp))
+                                                Text(
+                                                    text = if (currentUser?.role == "PROVIDER") "Service Provider" else "Customer Member",
+                                                    style = MaterialTheme.typography.labelSmall,
+                                                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                                                )
+                                            }
+                                        }
+                                    },
+                                    confirmButton = {
+                                        TextButton(onClick = { showProfileDialog = false }) {
+                                            Text("Close")
+                                        }
+                                    },
+                                    dismissButton = {
+                                        Button(
+                                            onClick = {
+                                                showProfileDialog = false
+                                                viewModel.logoutUser()
+                                            },
+                                            colors = ButtonDefaults.buttonColors(
+                                                containerColor = MaterialTheme.colorScheme.error,
+                                                contentColor = MaterialTheme.colorScheme.onError
+                                            )
+                                        ) {
+                                            Icon(Icons.Default.Logout, contentDescription = null, modifier = Modifier.size(16.dp))
+                                            Spacer(modifier = Modifier.width(6.dp))
+                                            Text("Sign Out")
+                                        }
+                                    },
+                                    shape = RoundedCornerShape(24.dp)
+                                )
+                            }
+
+                            // Interactive profile bubble icon
+                            IconButton(
+                                onClick = { showProfileDialog = true },
+                                modifier = Modifier
+                                    .padding(end = 4.dp)
+                                    .testTag("app_bar_profile_icon")
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(32.dp)
+                                        .clip(CircleShape)
+                                        .background(MaterialTheme.colorScheme.primaryContainer),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = currentUser?.name?.take(1)?.uppercase() ?: "U",
+                                        style = MaterialTheme.typography.titleSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                                    )
+                                }
+                            }
+
                             // Immersive role change switch
                             FilledTonalButton(
                                 onClick = {

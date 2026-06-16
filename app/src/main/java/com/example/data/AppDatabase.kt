@@ -56,6 +56,16 @@ interface ServiceDao {
 
     @Query("UPDATE chat_conversations SET lastMessageText = :text, lastMessageTimestamp = :ts WHERE providerId = :providerId")
     suspend fun updateConversationLastMessage(providerId: Int, text: String, ts: Long)
+
+    // Users
+    @Query("SELECT * FROM users WHERE email = :email LIMIT 1")
+    suspend fun getUserByEmail(email: String): UserAccount?
+
+    @Query("SELECT * FROM users")
+    fun getAllUsers(): Flow<List<UserAccount>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertUser(user: UserAccount)
 }
 
 @Database(
@@ -63,9 +73,10 @@ interface ServiceDao {
         ServiceProvider::class,
         Booking::class,
         ChatMessage::class,
-        ChatConversation::class
+        ChatConversation::class,
+        UserAccount::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

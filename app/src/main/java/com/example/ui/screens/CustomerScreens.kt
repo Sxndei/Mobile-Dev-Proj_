@@ -41,6 +41,7 @@ fun CustomerDashboard(
     viewModel: ServiceViewModel,
     modifier: Modifier = Modifier
 ) {
+    val currentUser by viewModel.currentUser.collectAsState()
     val providers by viewModel.filteredProviders.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
@@ -77,10 +78,11 @@ fun CustomerDashboard(
                 contentAlignment = Alignment.CenterStart
             ) {
                 Column {
+                    val greetingName = currentUser?.name?.substringBefore(" ") ?: "there"
                     Text(
-                        text = "Need a plumber, tutor, or cleaner?",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
+                        text = "Need a service, $greetingName?",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.ExtraBold,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                     Spacer(modifier = Modifier.height(6.dp))
